@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { InvoiceCard, type Invoice } from "@/components/invoices/InvoiceCard";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -63,7 +62,7 @@ const Invoices = () => {
   );
 
   return (
-    <DashboardLayout>
+    <div>
       <div className="mb-8">
         <h1 className="text-3xl font-semibold text-gray-900">Invoices</h1>
         <p className="text-gray-500 mt-2">Manage and process incoming invoices</p>
@@ -90,7 +89,7 @@ const Invoices = () => {
           />
         ))}
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

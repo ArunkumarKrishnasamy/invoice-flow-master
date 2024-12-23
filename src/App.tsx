@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
-import { Index } from "./pages/Index";
-import { Invoices } from "./pages/Invoices";
+import Index from "./pages/Index";
+import Invoices from "./pages/Invoices";
 import EmailSetup from "./pages/EmailSetup";
 import { Toaster } from "./components/ui/toaster";
 
