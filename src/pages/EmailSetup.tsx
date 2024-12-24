@@ -2,12 +2,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Save } from "lucide-react";
+import { Mail, Save, Lock } from "lucide-react";
+import { useState } from "react";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  processingEmail: z.string().email("Invalid email address"),
+  inboxEmail: z.string().email("Invalid email address"),
+  appPassword: z.string().min(8, "App password must be at least 8 characters"),
+});
 
 export const EmailSetup = () => {
   const { toast } = useToast();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      processingEmail: "",
+      inboxEmail: "",
+      appPassword: "",
+    },
+  });
 
-  const handleSaveEmailConfig = async () => {
+  const handleSaveEmailConfig = async (values: z.infer<typeof formSchema>) => {
+    console.log("Saving email configuration:", values);
     toast({
       title: "Email Configuration Saved",
       description: "Your email settings have been updated successfully.",
@@ -28,24 +48,84 @@ export const EmailSetup = () => {
           <CardHeader>
             <CardTitle>Email Processing Settings</CardTitle>
             <CardDescription>
-              Configure the email address that will receive invoice attachments
+              Configure the email addresses and credentials for invoice processing
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <Mail className="h-5 w-5 text-muted-foreground" />
-              <div className="flex-1">
-                <Input
-                  type="email"
-                  placeholder="invoices@yourdomain.com"
-                  className="w-full"
+          <CardContent className="space-y-6">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSaveEmailConfig)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="processingEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Processing Email Address</FormLabel>
+                      <div className="flex items-center space-x-4">
+                        <Mail className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                        <FormControl>
+                          <Input
+                            placeholder="invoices@yourdomain.com"
+                            className="flex-1"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              <Button onClick={handleSaveEmailConfig}>
-                <Save className="h-4 w-4 mr-2" />
-                Save
-              </Button>
-            </div>
+
+                <FormField
+                  control={form.control}
+                  name="inboxEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Inbox Email Address</FormLabel>
+                      <div className="flex items-center space-x-4">
+                        <Mail className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                        <FormControl>
+                          <Input
+                            placeholder="inbox@gmail.com"
+                            className="flex-1"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="appPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>App Password</FormLabel>
+                      <div className="flex items-center space-x-4">
+                        <Lock className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="Enter your app password"
+                            className="flex-1"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end">
+                  <Button type="submit">
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Configuration
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </CardContent>
         </Card>
 
