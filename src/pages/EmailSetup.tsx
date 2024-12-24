@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Save, Lock } from "lucide-react";
+import { Mail, Save, Lock, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -17,6 +17,7 @@ const formSchema = z.object({
 
 export const EmailSetup = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,11 +28,24 @@ export const EmailSetup = () => {
   });
 
   const handleSaveEmailConfig = async (values: z.infer<typeof formSchema>) => {
-    console.log("Saving email configuration:", values);
-    toast({
-      title: "Email Configuration Saved",
-      description: "Your email settings have been updated successfully.",
-    });
+    try {
+      setIsSubmitting(true);
+      console.log("Saving email configuration:", values);
+      // Simulate API call with setTimeout
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      toast({
+        title: "Email Configuration Saved",
+        description: "Your email settings have been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save email configuration. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -119,9 +133,18 @@ export const EmailSetup = () => {
                 />
 
                 <div className="flex justify-end">
-                  <Button type="submit">
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Configuration
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        Save Configuration
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>
